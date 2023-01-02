@@ -12,8 +12,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 def getToken(request):
-    appId = '1dcb144be8994c0896d9a2c26a79e973'
-    appCertificate = 'bf115881a1664266b0b92c074679cd05'
+    appId = 'app id'
+    appCertificate = 'app cert'
     channelName = request.GET.get('channel')
     uid = random.randint(1, 230)
     expirationTime = 3600 * 24
@@ -54,3 +54,17 @@ def getMember(request):
     member = RoomMember.objects.get(uid=uid, room_name=room_name)
 
     return JsonResponse({'name': member.name}, safe=False)
+
+@csrf_exempt
+def deleteMember(request):
+    data = json.loads(request.body)
+
+    member = RoomMember.objects.get(
+        name=data['name'],
+        uid=data['UID'],
+        room_name=data['room_name']
+
+    )
+
+    member.delete()
+    return JsonResponse('Deleted', safe=False)
